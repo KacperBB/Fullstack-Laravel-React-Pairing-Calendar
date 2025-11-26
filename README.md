@@ -4,7 +4,7 @@ App made for me and my partner to have our own calendar app - Made with Laravel 
 
 ## Tech Stack
 
-- **Backend**: Laravel 11 with Sanctum authentication
+- **Backend**: Laravel 12 with Sanctum authentication
 - **Frontend**: React with Vite
 - **Database**: MySQL/SQLite
 - **Features**: 
