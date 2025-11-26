@@ -1,14 +1,21 @@
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import PartnersPage from "./pages/PartnersPage";
 import HomePage from "./pages/HomePage";
+import "./App.css";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) return <div>Ładowanie...</div>;
+  if (loading) {
+    return (
+      <div className="loading">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
   if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
   return children;
@@ -16,29 +23,57 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <div>
-      <header style={{ padding: "10px", borderBottom: "1px solid #ddd", marginBottom: "10px" }}>
-        <nav style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <Link to="/">Strona główna</Link>
-          {isAuthenticated && <Link to="/dashboard">Dashboard</Link>}
-          {isAuthenticated && <Link to="/partners">Partnerzy</Link>}
+    <div className="app-container">
+      <header className="app-header">
+        <nav className="app-nav">
+          <div className="nav-links">
+            <Link
+              to="/"
+              className={`nav-link ${isActive('/') ? 'active' : ''}`}
+            >
+              🏠 Strona główna
+            </Link>
+            {isAuthenticated && (
+              <>
+                <Link
+                  to="/dashboard"
+                  className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
+                >
+                  📅 Kalendarz
+                </Link>
+                <Link
+                  to="/partners"
+                  className={`nav-link ${isActive('/partners') ? 'active' : ''}`}
+                >
+                  👥 Partnerzy
+                </Link>
+              </>
+            )}
+          </div>
 
-          <div style={{ marginLeft: "auto" }}>
+          <div className="nav-user">
             {isAuthenticated ? (
               <>
-                <span style={{ marginRight: "10px" }}>{user?.name}</span>
-                <button onClick={logout}>Wyloguj</button>
+                <span className="user-name">👤 {user?.name}</span>
+                <button onClick={logout} className="btn-logout">
+                  Wyloguj
+                </button>
               </>
             ) : (
-              <Link to="/auth">Zaloguj</Link>
+              <Link to="/auth" className="nav-link">
+                Zaloguj się
+              </Link>
             )}
           </div>
         </nav>
       </header>
 
-      <main style={{ padding: "10px" }}>
+      <main className="app-main">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthPage />} />

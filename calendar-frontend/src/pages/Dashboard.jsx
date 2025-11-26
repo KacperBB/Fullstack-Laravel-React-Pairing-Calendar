@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchEvents } from "../api";
 import { useAuth } from "../AuthContext";
+import styles from "./Dashboard.module.css";
 
 // helper: zamiana Date -> "YYYY-MM-DD"
 function formatDate(date) {
@@ -98,128 +99,138 @@ export default function Dashboard() {
   const selectedDateObj = new Date(selectedDate);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
-      <div>
-        {/* Nawigacja po miesiącach */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 10,
-          }}
-        >
-          <button onClick={handlePrevMonth}>{"<"}</button>
-          <h2 style={{ textTransform: "capitalize" }}>{monthName}</h2>
-          <button onClick={handleNextMonth}>{">"}</button>
+    <div className={styles.dashboardContainer}>
+      <div className={styles.calendarSection}>
+        {/* Calendar Card */}
+        <div className={styles.calendarCard}>
+          <div className={styles.calendarHeader}>
+            <h2 className={styles.monthTitle}>{monthName}</h2>
+            <div className={styles.monthNav}>
+              <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
+              <button onClick={handleNextMonth} className={styles.navButton}>→</button>
+            </div>
+          </div>
+
+          <table className={styles.calendarTable}>
+            <thead>
+              <tr>
+                {["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"].map(dow => (
+                  <th key={dow}>{dow}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {monthMatrix.map((week, wi) => (
+                <tr key={wi}>
+                  {week.map(({ date, isCurrentMonth }, di) => {
+                    const isSelected = formatDate(date) === selectedDate;
+                    const isToday = formatDate(date) === formatDate(new Date());
+
+                    let dayClasses = styles.calendarDay;
+                    if (!isCurrentMonth) dayClasses += ` ${styles.otherMonth}`;
+                    if (isToday) dayClasses += ` ${styles.today}`;
+                    if (isSelected) dayClasses += ` ${styles.selected}`;
+
+                    return (
+                      <td key={di}>
+                        <div
+                          className={dayClasses}
+                          onClick={() => handleDayClick(date)}
+                        >
+                          {date.getDate()}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Tabela z dniami miesiąca */}
-        <table style={{ borderCollapse: "collapse", width: "100%", marginBottom: 20 }}>
-          <thead>
-            <tr>
-              {["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"].map(dow => (
-                <th
-                  key={dow}
-                  style={{
-                    borderBottom: "1px solid #ddd",
-                    padding: 4,
-                    textAlign: "center",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {dow}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {monthMatrix.map((week, wi) => (
-              <tr key={wi}>
-                {week.map(({ date, isCurrentMonth }, di) => {
-                  const isSelected = formatDate(date) === selectedDate;
-                  const isToday = formatDate(date) === formatDate(new Date());
+        {/* Events List */}
+        <div className={styles.eventsSection}>
+          <div className={styles.sectionTitle}>
+            📋 Wydarzenia
+            <span className={styles.selectedDateBadge}>
+              {selectedDateObj.toLocaleDateString("pl-PL", { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+          </div>
 
-                  return (
-                    <td
-                      key={di}
-                      onClick={() => handleDayClick(date)}
-                      style={{
-                        padding: 8,
-                        textAlign: "center",
-                        cursor: "pointer",
-                        border: "1px solid #eee",
-                        backgroundColor: isSelected
-                          ? "#1976d2"
-                          : isToday
-                          ? "#e3f2fd"
-                          : "transparent",
-                        color: !isCurrentMonth ? "#aaa" : isSelected ? "#fff" : "#000",
-                      }}
-                    >
-                      {date.getDate()}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Lista eventów dla wybranego dnia */}
-        <div>
-          <h3>Wydarzenia w dniu {selectedDateObj.toLocaleDateString("pl-PL")}</h3>
           {loading ? (
-            <div>Ładowanie...</div>
+            <div className="loading">
+              <div className="loading-spinner"></div>
+            </div>
           ) : events.length === 0 ? (
-            <div>Brak wydarzeń.</div>
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateIcon}>📅</div>
+              <div className={styles.emptyStateText}>Brak wydarzeń w tym dniu</div>
+            </div>
           ) : (
-            <ul style={{ listStyle: "none", padding: 0 }}>
+            <div className={styles.eventsList}>
               {events.map(ev => (
-                <li
-                  key={ev.id}
-                  style={{
-                    border: "1px solid #ddd",
-                    marginBottom: 8,
-                    padding: 8,
-                    background: ev.color || "#f5f5f5",
-                  }}
-                >
-                  <div>
-                    <strong>{ev.title}</strong> ({ev.start_time} - {ev.end_time})
+                <div key={ev.id} className={styles.eventCard}>
+                  <div className={styles.eventHeader}>
+                    <div className={styles.eventTitle}>{ev.title}</div>
+                    <div className={styles.eventTime}>
+                      {ev.start_time} - {ev.end_time}
+                    </div>
                   </div>
-                  {ev.note && <div style={{ fontSize: "0.9em" }}>{ev.note}</div>}
-                </li>
+                  {ev.note && <div className={styles.eventNote}>{ev.note}</div>}
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </div>
 
-      {/* prawa kolumna - na razie placeholder, później możesz tu dać formę dodawania eventów, komentarze itd. */}
-      <div>
-        <h3>Szczegóły / dalsza rozbudowa</h3>
-        <p>
-          Tutaj możesz później dodać:
-        </p>
-        <ul>
-          <li>formularz tworzenia eventu dla wybranego dnia,</li>
-          <li>komentarze do eventów,</li>
-          <li>listę eventów partnerów w tym samym dniu.</li>
-        </ul>
-      </div>
-      <div style={{ marginBottom: 16, padding: 8, border: "1px solid #ddd" }}>
-  {user?.is_paired ? (
-    <div style={{ color: "green" }}>
-      Sparowany użytkownik: partner_id = {user.partner_id}
-    </div>
-  ) : (
-    <div style={{ color: "red" }}>
-      Nie jesteś sparowany z żadnym użytkownikiem.
-    </div>
-  )}
-</div>
+      {/* Sidebar */}
+      <div className={styles.sidebar}>
+        {/* Pairing Status */}
+        <div className={styles.sidebarCard}>
+          <div className={styles.sidebarTitle}>Status parowania</div>
+          {user?.is_paired ? (
+            <div className={`${styles.statusCard} ${styles.paired}`}>
+              <div className={styles.statusIcon}>✓</div>
+              <div className={styles.statusText}>
+                <strong>Sparowany</strong>
+                Partner ID: {user.partner_id}
+              </div>
+            </div>
+          ) : (
+            <div className={`${styles.statusCard} ${styles.notPaired}`}>
+              <div className={styles.statusIcon}>⚠</div>
+              <div className={styles.statusText}>
+                <strong>Brak parowania</strong>
+                Przejdź do zakładki Partnerzy
+              </div>
+            </div>
+          )}
+        </div>
 
+        {/* Future Features */}
+        <div className={styles.sidebarCard}>
+          <div className={styles.sidebarTitle}>Funkcje</div>
+          <ul className={styles.featureList}>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon}>➕</span>
+              <span>Dodawanie nowych wydarzeń</span>
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon}>💬</span>
+              <span>Komentarze do wydarzeń</span>
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon}>👥</span>
+              <span>Wspólny widok z partnerem</span>
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon}>🔔</span>
+              <span>Powiadomienia o wydarzeniach</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

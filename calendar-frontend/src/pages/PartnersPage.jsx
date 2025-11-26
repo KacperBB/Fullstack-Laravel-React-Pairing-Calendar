@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchPartners, generatePairingCode, pairWithCode, fetchPartnerEvents } from "../api";
+import styles from "./PartnersPage.module.css";
 
 export default function PartnersPage() {
   const [partners, setPartners] = useState([]);
@@ -61,92 +62,120 @@ export default function PartnersPage() {
   }, [selectedPartner, date]);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "20px" }}>
-      <div>
-        <h2>Partnerzy</h2>
-        <button onClick={handleGenerateCode}>Wygeneruj kod parowania</button>
-        {generatedCode && (
-          <div style={{ marginTop: "8px" }}>
-            <strong>Twój kod:</strong> <code>{generatedCode}</code>
-            <div style={{ fontSize: "0.8em" }}>Przekaż go drugiej osobie.</div>
+    <div className={styles.partnersContainer}>
+      <div className={styles.leftPanel}>
+        {/* Generate Code Card */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>🔑 Generuj kod parowania</h2>
+          <button onClick={handleGenerateCode} className={styles.generateButton}>
+            Wygeneruj nowy kod
+          </button>
+          {generatedCode && (
+            <div className={styles.codeDisplay}>
+              <div className={styles.codeLabel}>Twój kod parowania:</div>
+              <div className={styles.codeValue}>{generatedCode}</div>
+              <div className={styles.codeHint}>Przekaż ten kod drugiej osobie</div>
+            </div>
+          )}
+        </div>
+
+        {/* Pair with Code Card */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>🔗 Sparuj się kodem</h2>
+          <form onSubmit={handlePair} className={styles.pairingForm}>
+            <input
+              value={code}
+              onChange={e => setCode(e.target.value.toUpperCase())}
+              placeholder="Wpisz kod parowania"
+              className={styles.codeInput}
+            />
+            <button type="submit" className={styles.pairButton}>
+              Sparuj
+            </button>
+          </form>
+        </div>
+
+        {/* Partners List Card */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>👥 Lista partnerów</h2>
+          <div className={styles.partnersList}>
+            {partners.map(p => (
+              <div
+                key={p.id}
+                className={`${styles.partnerItem} ${selectedPartner?.id === p.id ? styles.selected : ''}`}
+                onClick={() => setSelectedPartner(p)}
+              >
+                <div className={styles.partnerName}>{p.name}</div>
+                <div className={styles.partnerEmail}>{p.email}</div>
+              </div>
+            ))}
+            {partners.length === 0 && (
+              <div className={styles.emptyPartners}>
+                Brak partnerów. Wygeneruj kod i podziel się nim!
+              </div>
+            )}
           </div>
-        )}
-
-        <h3>Sparuj się kodem</h3>
-        <form onSubmit={handlePair}>
-          <input
-            value={code}
-            onChange={e => setCode(e.target.value.toUpperCase())}
-            placeholder="Kod parowania"
-          />
-          <button type="submit">Sparuj</button>
-        </form>
-
-        <h3>Lista partnerów</h3>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {partners.map(p => (
-            <li
-              key={p.id}
-              style={{
-                border: "1px solid #ddd",
-                padding: "6px",
-                marginBottom: "6px",
-                cursor: "pointer",
-                background: selectedPartner?.id === p.id ? "#eee" : "white",
-              }}
-              onClick={() => setSelectedPartner(p)}
-            >
-              <strong>{p.name}</strong>
-              <div style={{ fontSize: "0.8em" }}>{p.email}</div>
-            </li>
-          ))}
-          {partners.length === 0 && <li>Brak partnerów.</li>}
-        </ul>
+        </div>
       </div>
 
-      <div>
-        <h2>Plan partnera</h2>
-        {selectedPartner ? (
-          <>
-            <div style={{ marginBottom: "8px" }}>
-              <strong>{selectedPartner.name}</strong>
-            </div>
-            <div style={{ marginBottom: "8px" }}>
-              <label>Data: </label>
-              <input
-                type="date"
-                value={date}
-                onChange={e => setDate(e.target.value)}
-              />
-            </div>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {partnerEvents.map(ev => (
-                <li
-                  key={ev.id}
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "8px",
-                    marginBottom: "8px",
-                    background: ev.color || "#f5f5f5",
-                  }}
-                >
-                  <div>
-                    <strong>{ev.title}</strong> ({ev.start_time} - {ev.end_time})
+      {/* Right Panel - Partner Events */}
+      <div className={styles.rightPanel}>
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>📅 Plan partnera</h2>
+          {selectedPartner ? (
+            <>
+              <div className={styles.partnerHeader}>
+                <div className={styles.partnerInfo}>
+                  <div className={styles.partnerAvatar}>
+                    {selectedPartner.name.charAt(0).toUpperCase()}
                   </div>
-                  {ev.note && <div style={{ fontSize: "0.9em" }}>{ev.note}</div>}
-                </li>
-              ))}
-              {partnerEvents.length === 0 && (
-                <li>Brak eventów partnera na ten dzień.</li>
-              )}
-            </ul>
-            <div style={{ fontSize: "0.8em", marginTop: "8px" }}>
-              Komentarze do eventów partnera robisz w tym samym panelu co swoje – jeśli masz ID eventu, możesz go kliknąć w swoim UI (to można potem rozbudować).
+                  <div className={styles.partnerDetails}>
+                    <div className={styles.partnerDetailsName}>{selectedPartner.name}</div>
+                    <div className={styles.partnerDetailsEmail}>{selectedPartner.email}</div>
+                  </div>
+                </div>
+                <div className={styles.dateSelector}>
+                  <label className={styles.dateLabel}>Data:</label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={e => setDate(e.target.value)}
+                    className={styles.dateInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.eventsList}>
+                {partnerEvents.map(ev => (
+                  <div key={ev.id} className={styles.eventCard}>
+                    <div className={styles.eventHeader}>
+                      <div className={styles.eventTitle}>{ev.title}</div>
+                      <div className={styles.eventTime}>
+                        {ev.start_time} - {ev.end_time}
+                      </div>
+                    </div>
+                    {ev.note && <div className={styles.eventNote}>{ev.note}</div>}
+                  </div>
+                ))}
+                {partnerEvents.length === 0 && (
+                  <div className={styles.emptyEvents}>
+                    <div className={styles.emptyEventsIcon}>📭</div>
+                    <div>Brak wydarzeń w tym dniu</div>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.infoNote}>
+                💡 Możesz zobaczyć plan swojego partnera i lepiej zaplanować wspólny czas
+              </div>
+            </>
+          ) : (
+            <div className={styles.placeholder}>
+              <div className={styles.placeholderIcon}>👈</div>
+              <div className={styles.placeholderText}>Wybierz partnera z listy</div>
             </div>
-          </>
-        ) : (
-          <div>Wybierz partnera z listy po lewej.</div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

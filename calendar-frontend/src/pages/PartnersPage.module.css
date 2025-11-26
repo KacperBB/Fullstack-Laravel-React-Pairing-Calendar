@@ -1,0 +1,299 @@
+.partnersContainer {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  animation: fadeIn 0.4s ease;
+}
+
+@media (max-width: 1024px) {
+  .partnersContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Panel */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.generateButton {
+  width: 100%;
+  background-color: var(--color-accent);
+  color: white;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.generateButton:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.codeDisplay {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--color-bg-secondary);
+  border-radius: 8px;
+  border: 2px dashed var(--color-border-hover);
+  animation: slideIn 0.3s ease;
+}
+
+.codeLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.codeValue {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--color-accent);
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.codeHint {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.pairingForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.codeInput {
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 12px;
+}
+
+.pairButton {
+  background-color: var(--color-success);
+  color: white;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.pairButton:hover:not(:disabled) {
+  background-color: #0d6b5e;
+}
+
+.partnersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.partnerItem {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: slideIn 0.3s ease;
+}
+
+.partnerItem:hover {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+.partnerItem.selected {
+  background-color: var(--color-accent-light);
+  border-color: var(--color-accent);
+}
+
+.partnerName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.partnerEmail {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.emptyPartners {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--color-text-tertiary);
+}
+
+/* Right Panel */
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.partnerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.partnerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.partnerAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-success));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.partnerDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.partnerDetailsName {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.partnerDetailsEmail {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.dateSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dateLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.dateInput {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.eventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eventCard {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  animation: slideIn 0.3s ease;
+}
+
+.eventCard:hover {
+  box-shadow: 0 4px 12px var(--color-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.eventTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.eventTime {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.eventNote {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.emptyEvents {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-tertiary);
+}
+
+.emptyEventsIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--color-text-tertiary);
+}
+
+.placeholderIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.placeholderText {
+  font-size: 16px;
+}
+
+.infoNote {
+  padding: 16px;
+  background-color: var(--color-accent-light);
+  border: 1px solid rgba(35, 131, 226, 0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { Navigate } from "react-router-dom";
+import styles from "./AuthPage.module.css";
 
 export default function AuthPage() {
   const { isAuthenticated, login, register } = useAuth();
@@ -29,7 +30,7 @@ export default function AuthPage() {
       }
     } catch (err) {
       console.error(err);
-      setError("Nie udało się zalogować/zarejestrować");
+      setError(err.response?.data?.message || "Nie udało się zalogować/zarejestrować");
     } finally {
       setLoading(false);
     }
@@ -41,37 +42,77 @@ export default function AuthPage() {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-      <h2>{mode === "login" ? "Logowanie" : "Rejestracja"}</h2>
-      <div style={{ marginBottom: "10px" }}>
-        <button disabled={mode === "login"} onClick={() => setMode("login")}>
-          Mam konto
-        </button>
-        <button disabled={mode === "register"} onClick={() => setMode("register")} style={{ marginLeft: "8px" }}>
-          Nowe konto
-        </button>
-      </div>
+    <div className={styles.authContainer}>
+      <div className={styles.authCard}>
+        <h1 className={styles.authTitle}>
+          {mode === "login" ? "Witaj ponownie" : "Utwórz konto"}
+        </h1>
+        <p className={styles.authSubtitle}>
+          {mode === "login"
+            ? "Zaloguj się do swojego kalendarza"
+            : "Rozpocznij zarządzanie swoim czasem"}
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        {mode === "register" && (
-          <div>
-            <label>Imię</label>
-            <input name="name" value={form.name} onChange={handleChange} required />
+        <div className={styles.modeTabs}>
+          <button
+            className={`${styles.modeTab} ${mode === "login" ? styles.active : ""}`}
+            onClick={() => setMode("login")}
+          >
+            Logowanie
+          </button>
+          <button
+            className={`${styles.modeTab} ${mode === "register" ? styles.active : ""}`}
+            onClick={() => setMode("register")}
+          >
+            Rejestracja
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className={styles.authForm}>
+          {mode === "register" && (
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Imię</label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className={styles.formInput}
+                placeholder="Jan Kowalski"
+              />
+            </div>
+          )}
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Email</label>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className={styles.formInput}
+              placeholder="twoj@email.com"
+            />
           </div>
-        )}
-        <div>
-          <label>Email</label>
-          <input name="email" type="email" value={form.email} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Hasło</label>
-          <input name="password" type="password" value={form.password} onChange={handleChange} required />
-        </div>
-        {error && <div style={{ color: "red" }}>{error}</div>}
-        <button type="submit" disabled={loading}>
-          {loading ? "..." : mode === "login" ? "Zaloguj" : "Zarejestruj"}
-        </button>
-      </form>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Hasło</label>
+            <input
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className={styles.formInput}
+              placeholder="••••••••"
+              minLength={6}
+            />
+          </div>
+          {error && <div className={styles.errorMessage}>{error}</div>}
+          <button type="submit" disabled={loading} className={styles.submitButton}>
+            {loading ? "Proszę czekać..." : mode === "login" ? "Zaloguj się" : "Zarejestruj się"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
